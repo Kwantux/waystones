@@ -32,7 +32,7 @@ java {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.6")
+        minecraftVersion("1.21.8")
 
         downloadPlugins {
             url("https://mitochondrium.kalimero2.com/plugins/resource-pack-loader-1.0.0.jar")

@@ -6,7 +6,7 @@ dependencyResolutionManagement{
 
             version("floodgate-api","2.2.2-SNAPSHOT")
             version("geyser-geyserApi","2.2.2-SNAPSHOT")
-            version("anvilgui","1.9.6-SNAPSHOT")
+            version("anvilgui","1.10.8-SNAPSHOT")
             version("sqlite","3.47.0.0")
             version("cloud", "2.0.0-beta.10")
 
@@ -19,7 +19,7 @@ dependencyResolutionManagement{
             plugin("paper-run","xyz.jpenilla.run-paper").version("2.3.1")
             plugin("plugin-yml","net.minecrell.plugin-yml.bukkit").version("0.6.0")
 
-            version("paper","1.20.6-R0.1-SNAPSHOT")
+            version("paper","1.21.5-R0.1-SNAPSHOT")
 
             library("paper","io.papermc.paper","paper-api").versionRef("paper")
             library("cloud-paper","org.incendo","cloud-paper").versionRef("cloud")
