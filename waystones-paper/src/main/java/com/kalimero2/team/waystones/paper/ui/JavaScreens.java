@@ -34,12 +34,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.kalimero2.team.waystones.paper.ui.screen.JavaInputScreen.anvilUIPrefix;
+
 public class JavaScreens {
 
     private final PaperWayStones plugin;
     private final WaystoneManager manager;
-
-    private final Component anvilUIPrefix = MiniMessage.miniMessage().deserialize("<white><tr:space.-60><font:klm2:waystones>c</font><tr:space.-172>");
 
     private final Map<UUID, CacheEntry> pageCache = new ConcurrentHashMap<>();
     private static final long CACHE_EXPIRY_MS = 5 * 60 * 1000; // Cache size is 5 Minutes
@@ -243,38 +243,6 @@ public class JavaScreens {
         List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), search).stream().filter(w -> manager.canTeleport(w, player)).toList();
         List<Component> pages = getCachedPages(player, null, waystones, false);
         player.openBook(Book.book(Component.empty(), Component.empty(), pages));
-    }
-
-    public void addAccess(Player player, StoredWaystone waystone) {
-        if (!manager.canEdit(waystone, player)) return;
-        ItemStack stack = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta meta = stack.getItemMeta();
-        meta.displayName(Component.text("name"));
-        stack.setItemMeta(meta);
-
-        Component title = anvilUIPrefix.append(Component.translatable("waystones.ui.anvil.player"));
-        String jsonTitle = JSONComponentSerializer.json().serialize(title);
-
-        new AnvilGUI.Builder().jsonTitle(jsonTitle).itemLeft(stack).onClick((n, state) -> {
-            if(n == 0 || n == 1){
-                return Collections.singletonList(AnvilGUI.ResponseAction.close());
-            }
-
-            OfflinePlayer p = plugin.getServer().getOfflinePlayerIfCached(state.getText());
-            if (p == null) {
-                Component title2 = anvilUIPrefix.append(Component.translatable("waystones.ui.anvil.player.invalid"));
-                String jsonTitle2 = JSONComponentSerializer.json().serialize(title2);
-                return Collections.singletonList(AnvilGUI.ResponseAction.updateJsonTitle(jsonTitle2, true));
-            }
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    manager.addAccess(p, waystone.id());
-                }
-            }.runTask(plugin);
-            return Collections.singletonList(AnvilGUI.ResponseAction.close());
-        }).plugin(plugin).open(player);
-
     }
 
     public void accessSettings(Player player, StoredWaystone waystone) {

@@ -56,6 +56,18 @@ public class NewScreens {
         screen.open(player);
     }
 
+    /**
+     * Opens the player add menu for the player
+     *
+     * @param player   Owner of the waystone
+     * @param waystone Waystone
+     */
+    public void addPlayer(Player player, StoredWaystone waystone) {
+        if (!manager.canEdit(waystone, player)) return;
+        InputScreen screen = createAddPlayerScreen(waystone);
+        screen.open(player);
+    }
+
 
     /**
      * Opens the edit menu for the player
@@ -272,6 +284,32 @@ public class NewScreens {
                 public void run() {
                     StoredWaystone newWaystone = new StoredWaystone(waystone.id(), waystone.name(), target.getUniqueId(), waystone.visibility(), waystone.category(), waystone.chunk_x(), waystone.chunk_z(), waystone.block_x(), waystone.block_y(), waystone.block_z(), waystone.world(), waystone.uses());
                     manager.updateWaystone(newWaystone);
+                }
+            }.runTask(plugin);
+
+
+            return new InputScreen.InputValidation(true, null);
+        }));
+
+
+        return builder.build();
+    }
+
+    private InputScreen createAddPlayerScreen(@NotNull StoredWaystone waystone) {
+        InputScreen.Builder builder = InputScreen.builder().title(Component.text("Waystone " + waystone.name())).plugin(plugin);
+        builder.content("Füge einen Spieler hinzu");
+        builder.input(new InputScreen.Input(Component.text("Neuer Spieler"), "", (player, input) -> {
+            if (input == null || input.isEmpty()) {
+                return new InputScreen.InputValidation(false, "Der Name darf nicht leer sein!");
+            }
+            OfflinePlayer target = plugin.getServer().getOfflinePlayerIfCached(input);
+            if (target == null) {
+                return new InputScreen.InputValidation(false, "Dieser Spieler existiert nicht!");
+            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                     manager.addAccess(target, waystone.id());
                 }
             }.runTask(plugin);
 

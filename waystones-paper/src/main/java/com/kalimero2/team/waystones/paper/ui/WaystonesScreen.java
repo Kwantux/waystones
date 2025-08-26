@@ -94,11 +94,7 @@ public class WaystonesScreen {
     }
 
     public void addAccess(Player player, StoredWaystone waystone) {
-        if (plugin.isBedrockPlayer(player)) {
-            floodgateScreens.accessAdd(player, waystone, LastCreationResult.FIRST_CALL);
-        } else {
-            java.addAccess(player, waystone);
-        }
+        newScreens.addPlayer(player, waystone);
     }
 
     public void removeAccess(Player player, StoredWaystone waystone) {

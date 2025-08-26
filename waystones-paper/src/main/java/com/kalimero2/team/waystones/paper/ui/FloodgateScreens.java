@@ -185,52 +185,6 @@ public class FloodgateScreens {
     }
 
     /**
-     * Opens the menu to add a player to the access list
-     *
-     * @param player   Player that wants to edit the list
-     * @param waystone Waystone the list should be changed of
-     */
-    public void accessAdd(@NotNull Player player, @NotNull StoredWaystone waystone, LastCreationResult lcr) {
-        if (!manager.canEdit(waystone, player)) {
-            player.sendMessage(Component.translatable("waystones.nopermission.edit").fallback("Du hast keine Berechtigung diesen Waystone zu bearbeiten!").asComponent().color(TextColor.color(255, 0, 0)));
-            return;
-        }
-
-        CustomForm.Builder builder = CustomForm.builder().title("Waystone " + waystone.name());
-
-        switch (lcr) {
-            case PLAYER_INVALID -> {
-                builder.label("Dieser Spieler existiert nicht.");
-            }
-            case PLAYER_EXISTING -> {
-                builder.label("Dieser Spieler ist bereits auf der Liste.");
-            }
-            default -> {
-                builder.label("Spieler zur Zugriffsliste hinzufügen");
-            }
-        }
-
-        builder.input("Spielername (Bei Bedrock mit . starten)");
-
-        builder.validResultHandler(customFormResponse -> {
-            OfflinePlayer p = Bukkit.getOfflinePlayerIfCached(customFormResponse.asInput());
-            if (p == null) {
-                accessAdd(player, waystone, LastCreationResult.PLAYER_INVALID);
-                return;
-            }
-            if (manager.hasAccess(p, waystone.id())) {
-                accessAdd(player, waystone, LastCreationResult.PLAYER_EXISTING);
-                return;
-            }
-            manager.addAccess(p, waystone.id());
-        });
-
-        FloodgatePlayer floodgatePlayer = FloodgateApi.getInstance().getPlayer(player.getUniqueId());
-        floodgatePlayer.sendForm(builder.build());
-
-    }
-
-    /**
      * Opens the menu to remove a player from the accesslist
      *
      * @param player   Player that wants to edit the list
