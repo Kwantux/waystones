@@ -34,9 +34,10 @@ tasks {
     runServer {
         minecraftVersion("26.1.2")
 
-//        downloadPlugins {
-//            url("https://mitochondrium.kalimero2.com/plugins/resource-pack-loader-1.0.0.jar")
-//        }
+        downloadPlugins {
+            url("https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot")
+            url("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot")
+        }
     }
 
     shadowJar {
@@ -50,5 +51,5 @@ bukkit {
     apiVersion = "1.20"
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     authors = listOf("byquanton", "kwantux")
-    softDepend = listOf("floodgate", "claims-paper","resource-pack-loader")
+    softDepend = listOf("floodgate", "claims-paper", "resource-pack-loader")
 }
