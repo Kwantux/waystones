@@ -9,8 +9,8 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
-    maven("https://repo.kalimero2.com/releases")
+//    maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
+//    maven("https://repo.kalimero2.com/releases")
     maven("https://repo.opencollab.dev/maven-snapshots/")
     maven("https://repo.opencollab.dev/maven-releases/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
@@ -20,28 +20,28 @@ repositories {
 dependencies {
     bukkitLibrary(libs.cloud.paper)
     bukkitLibrary(libs.sqlite)
-    implementation(libs.anvilgui)
+//    implementation(libs.anvilgui)
     compileOnly(libs.paper)
     compileOnly(libs.floodgate.api)
-    compileOnly("com.kalimero2.team:claims-api:2.0.7")
+//    compileOnly("com.kalimero2.team:claims-api:2.0.7")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(26))
 }
 
 tasks {
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("26.1.2")
 
-        downloadPlugins {
-            url("https://mitochondrium.kalimero2.com/plugins/resource-pack-loader-1.0.0.jar")
-        }
+//        downloadPlugins {
+//            url("https://mitochondrium.kalimero2.com/plugins/resource-pack-loader-1.0.0.jar")
+//        }
     }
 
     shadowJar {
         fun reloc(pkg: String, name: String) = relocate(pkg, "com.kalimero2.team.waystones.paper.shaded.$name")
-        reloc("net.wesjd.anvilgui", "anvilgui")
+//        reloc("net.wesjd.anvilgui", "anvilgui")
     }
 }
 
