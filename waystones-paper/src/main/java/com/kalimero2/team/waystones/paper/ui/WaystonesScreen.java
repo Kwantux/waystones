@@ -33,7 +33,7 @@ public class WaystonesScreen {
         if (plugin.isBedrockPlayer(player)) {
             floodgateScreens.menu(player);
         } else {
-            java.search(player, null);
+            java.search(player);
         }
     }
 

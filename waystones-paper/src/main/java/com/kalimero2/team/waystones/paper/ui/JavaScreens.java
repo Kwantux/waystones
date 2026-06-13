@@ -3,15 +3,14 @@ package com.kalimero2.team.waystones.paper.ui;
 import com.kalimero2.team.waystones.paper.PaperWayStones;
 import com.kalimero2.team.waystones.paper.storage.StoredWaystone;
 import com.kalimero2.team.waystones.paper.storage.WaystoneManager;
+import com.kalimero2.team.waystones.paper.ui.screen.InputScreen;
 import com.kalimero2.team.waystones.paper.ui.util.DialogComponents;
 import com.kalimero2.team.waystones.paper.util.Category;
 import com.kalimero2.team.waystones.paper.util.SortMode;
-import com.kalimero2.team.waystones.paper.util.TextUtil;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
-import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
@@ -22,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -198,90 +196,33 @@ public class JavaScreens {
         return pages;
     }
 
-    public void search(Player player, @Nullable String searchTerm) {
-//        Component title = anvilUIPrefix.append(Component.text(searchTerm == null ? "Waystone name or part of the name" : "No waystone found containing '" + searchTerm + "' in its name."));
-//        String jsonTitle = JSONComponentSerializer.json().serialize(title);
-//
-//        if (searchTerm == null) searchTerm = "Search term";
-//
-//        ItemStack item = new ItemStack(Material.ITEM_FRAME);
-//        ItemMeta meta = item.getItemMeta();
-//        meta.displayName(Component.text(searchTerm));
-//        item.setItemMeta(meta);
-//
-//        new AnvilGUI.Builder().jsonTitle(jsonTitle).itemLeft(item).itemOutput(item).onClick((n, state) -> {
-//            if (state.getText().length() > 16) {
-//                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText("Maximal 16 Zeichen!"));
-//            }
-//            List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), state.getText());
-//            if (waystones.isEmpty()) {
-//                new BukkitRunnable() {
-//                    @Override
-//                    public void run() {
-//                        search(player, state.getText());
-//                    }
-//                }.runTaskLater(plugin, 1);
-//                return Collections.singletonList(AnvilGUI.ResponseAction.close());
-//            } else {
-//                new BukkitRunnable() {
-//                    @Override
-//                    public void run() {
-//                        list(player, state.getText());
-//                    }
-//                }.runTaskLater(plugin, 1);
-//            }
-//            return Collections.singletonList(AnvilGUI.ResponseAction.close());
-//        }).plugin(plugin).open(player);
-        // TODO: implement
-        player.sendMessage(Component.text("TODO: implement"));
+    public void search(Player player) {
+        InputScreen.Builder builder = InputScreen.builder().title(Component.text("Waystones")).plugin(plugin);
+        builder.label("Search");
+        builder.input(new InputScreen.Input(Component.text("Waystone Name"), "", (p, input) -> {
 
+            List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), input);
+            if (waystones.isEmpty()) {
+                return new InputScreen.InputValidation(false, "No waystones found!");
+            }
+            list(player, waystones);
+
+            return new InputScreen.InputValidation(true, null);
+        }));
+        builder.build().open(player);
     }
 
 
     public void list(Player player, String search) {
         // When the Player searches for a Waystone, we only check if they can teleport (unlisted are shown)
         List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), search).stream().filter(w -> manager.canTeleport(w, player)).toList();
-        List<Component> pages = getCachedPages(player, null, waystones, false);
-        player.openBook(Book.book(Component.empty(), Component.empty(), pages));
+        list(player, waystones);
     }
 
-    public void oldAccessSettings(Player player, StoredWaystone waystone) {
-        List<Component> pages = new ArrayList<>();
-        Component current_page = Component.empty();
-        int counter = 4;
-
-        current_page = current_page.append(Component.translatable("waystones.ui.access.title").color(TextColor.color(0, 10, 200)).decorate(TextDecoration.BOLD));
-        current_page = current_page.append(Component.newline().decoration(TextDecoration.BOLD, false));
-        current_page = current_page.append(Component.translatable("waystones.ui.access.add").clickEvent(ClickEvent.runCommand("/runcmd waystone internal button access add " + waystone.id())));
-        current_page = current_page.append(Component.newline());
-        current_page = current_page.append(Component.newline());
-
-        WaystoneManager manager = plugin.getManager();
-
-        List<OfflinePlayer> list = manager.getAccess(waystone.id());
-
-        for (OfflinePlayer p : list) {
-
-            counter++;
-            if (counter == 13) {
-                pages.add(current_page);
-                current_page = Component.empty();
-                counter = 0;
-                continue;
-            }
-
-            String name = p.getName();
-            current_page = current_page.append(Component.text("[X] ").color(TextUtil.RED).clickEvent(ClickEvent.runCommand("/runcmd waystone access " + waystone.id() + " remove " + name))).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.access.remove")));
-            current_page = current_page.append(Component.text(name));
-            current_page = current_page.append(Component.newline());
-
-            player.openBook(Book.book(Component.empty(), Component.empty(), pages));
-        }
-
-        pages.add(current_page);
-
+    public void list(Player player, List<StoredWaystone> waystones) {
+        // When the Player searches for a Waystone, we only check if they can teleport (unlisted are shown)
+        List<Component> pages = getCachedPages(player, null, waystones, false);
         player.openBook(Book.book(Component.empty(), Component.empty(), pages));
-
     }
 
     public void removeAccess(Player player, StoredWaystone waystone) {
