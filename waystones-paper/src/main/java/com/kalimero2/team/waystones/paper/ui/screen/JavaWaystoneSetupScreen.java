@@ -61,8 +61,6 @@ public class JavaWaystoneSetupScreen implements GenericScreen, Listener {
                         .build()
         );
 
-        ActionButton discardButton = DialogComponents.discardButton();
-
         DialogType dialogType;
 
         if (setupScreen.getWaystone() != null) {
@@ -101,11 +99,13 @@ public class JavaWaystoneSetupScreen implements GenericScreen, Listener {
                                     .build()
                     )
             );
-            dialogType = DialogType.multiAction(List.of(confirmButton, accessSettingsButton, deleteButton)).exitAction(discardButton).columns(1).build();
+            dialogType = DialogType.multiAction(List.of(accessSettingsButton, deleteButton)).exitAction(confirmButton).columns(1).build();
         }
         else {
-            ActionButton confirmButton = DialogComponents.confirmButton(confirmCallback);
-            dialogType = DialogType.confirmation(confirmButton, discardButton);
+            dialogType = DialogType.confirmation(
+                    DialogComponents.confirmButton(confirmCallback, false),
+                    DialogComponents.discardButton(false)
+            );
         }
 
         Visibility defaultVisibility;

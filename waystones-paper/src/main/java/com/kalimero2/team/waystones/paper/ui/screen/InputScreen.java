@@ -77,7 +77,7 @@ public class InputScreen implements GenericScreen {
     public static class Builder {
         private PaperWayStones plugin;
         private Component title;
-        private String content;
+        private String label;
         private Input input;
         private int maxLength = 20;
         private Consumer<Player> onExit = null;
@@ -92,8 +92,8 @@ public class InputScreen implements GenericScreen {
             return this;
         }
 
-        public Builder content(String content) {
-            this.content = content;
+        public Builder label(String label) {
+            this.label = label;
             return this;
         }
 
@@ -116,7 +116,7 @@ public class InputScreen implements GenericScreen {
         }
 
         public InputScreen build() {
-            return new InputScreen(plugin, title, content, input, maxLength, onExit);
+            return new InputScreen(plugin, title, label, input, maxLength, onExit);
         }
     }
 

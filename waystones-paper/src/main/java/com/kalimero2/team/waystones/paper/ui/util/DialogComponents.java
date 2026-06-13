@@ -12,11 +12,11 @@ public class DialogComponents {
     public static final TextColor CONFIRM_COLOR = TextColor.color(0xAEFFC1);
     public static final TextColor DISCARD_COLOR = TextColor.color(0xFFA0B1);
 
-    public final static ActionButton confirmButton(DialogActionCallback callback) {
+    public final static ActionButton confirmButton(DialogActionCallback callback, boolean fullSize) {
         return ActionButton.create(
                 Component.text("Confirm", CONFIRM_COLOR),
                 Component.text("Click to confirm your input."),
-                100,
+                fullSize ? 200 : 100,
                 DialogAction.customClick(
                         callback,
                         ClickCallback.Options.builder()
@@ -27,20 +27,20 @@ public class DialogComponents {
         );
     }
 
-    public final static ActionButton discardButton() {
+    public final static ActionButton discardButton(boolean fullSize) {
         return ActionButton.create(
                 Component.text("Discard", DISCARD_COLOR),
                 Component.text("Click to discard your input."),
-                100,
+                fullSize ? 200 : 100,
                 null // If we set the action to null, it doesn't do anything and closes the dialog
         );
     }
 
-    public final static ActionButton backButton(DialogActionCallback callback) {
+    public final static ActionButton backButton(DialogActionCallback callback, boolean fullSize) {
         return ActionButton.create(
                 Component.text("Back", DISCARD_COLOR),
                 Component.text("Go back to previous screen."),
-                100,
+                fullSize ? 200 : 100,
                 DialogAction.customClick(
                         callback,
                         ClickCallback.Options.builder()

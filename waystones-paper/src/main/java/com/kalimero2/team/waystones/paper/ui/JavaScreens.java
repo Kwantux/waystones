@@ -287,7 +287,6 @@ public class JavaScreens {
     public void removeAccess(Player player, StoredWaystone waystone) {
 
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(DialogComponents.backButton((view, audience) -> plugin.getScreen().accessSettings((Player) audience, waystone)));
 
         buttons.addAll(manager.getAccess(waystone.id()).stream().map(offlinePlayer ->
             ActionButton.create(
@@ -308,16 +307,8 @@ public class JavaScreens {
         ).toList());
 
         if (buttons.isEmpty()) {
-            Dialog dialog = Dialog.create(builder -> builder.empty()
-                    .base(
-                            DialogBase.builder(Component.text("Revoke Access"))
-                                    .canCloseWithEscape(true)
-                                    .body(List.of(DialogBody.plainMessage(Component.text("Noone has access to this waystone yet."))))
-                                    .build()
-                    )
-                    .type(DialogType.notice())
-            );
-            player.showDialog(dialog);
+            plugin.getScreen().accessSettings(player, waystone);
+            return;
         }
 
         Dialog dialog = Dialog.create(builder -> builder.empty()
@@ -326,7 +317,9 @@ public class JavaScreens {
                                 .canCloseWithEscape(true)
                                 .build()
                 )
-                .type(DialogType.multiAction(buttons).columns(1).build())
+                .type(DialogType.multiAction(buttons).exitAction(
+                        DialogComponents.backButton((view, audience) -> plugin.getScreen().accessSettings((Player) audience, waystone), true)
+                ).columns(1).build())
         );
         player.showDialog(dialog);
     }

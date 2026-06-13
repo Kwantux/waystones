@@ -56,13 +56,13 @@ public class JavaInputScreen implements GenericScreen, Listener {
                                         if (!inputValidation.valid()) {
                                             open(player, text, inputValidation.message());
                                         }
-                            }
+                            }, false
                         ),
                         inputScreen.hasOnExit() ?
                                 DialogComponents.backButton((view, audience) -> {
                                     inputScreen.callOnExit(player);
-                                }) :
-                                DialogComponents.discardButton()
+                                }, false) :
+                                DialogComponents.discardButton(false)
 
                 ))
         );

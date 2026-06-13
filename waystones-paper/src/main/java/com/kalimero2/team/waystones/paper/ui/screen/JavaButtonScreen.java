@@ -21,7 +21,7 @@ public class JavaButtonScreen implements GenericScreen, Listener {
     private final Dialog dialog;
 
     protected JavaButtonScreen(ButtonScreen buttonScreen) {
-        ActionButton backButton = DialogComponents.backButton((view, audience) -> buttonScreen.onExit((Player) audience));
+        ActionButton backButton = DialogComponents.backButton((view, audience) -> buttonScreen.onExit((Player) audience), true);
         dialog = Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(buttonScreen.getTitle()).body(List.of(DialogBody.plainMessage(buttonScreen.getLabel()))).build())
                 .type(DialogType.multiAction(

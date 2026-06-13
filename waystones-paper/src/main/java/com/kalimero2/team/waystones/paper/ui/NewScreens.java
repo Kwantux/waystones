@@ -7,14 +7,12 @@ import com.kalimero2.team.waystones.paper.ui.screen.ButtonScreen;
 import com.kalimero2.team.waystones.paper.ui.screen.GenericScreen;
 import com.kalimero2.team.waystones.paper.ui.screen.InputScreen;
 import com.kalimero2.team.waystones.paper.ui.screen.WaystoneSetupScreen;
-import com.kalimero2.team.waystones.paper.util.Category;
 import com.kalimero2.team.waystones.paper.util.TextUtil;
 import com.kalimero2.team.waystones.paper.util.Visibility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -153,10 +151,9 @@ public class NewScreens {
     }
 
     private ButtonScreen createDeleteScreen(@NotNull StoredWaystone waystone) {
-        ButtonScreen.Builder builder = ButtonScreen.builder().title(Component.text("Waystone " + waystone.name())).label(Component.text("Remove Waystone"));
+        ButtonScreen.Builder builder = ButtonScreen.builder().title(Component.text("Waystone " + waystone.name())).label(Component.text("Do you really want to remove this waystone?"));
         builder.plugin(plugin);
-
-        builder.button(new ButtonScreen.Button(Component.text("Do you really want to remove this waystone?"), 5, 5), player -> {
+        builder.button(new ButtonScreen.Button(Component.text("Confirm"), 5, 5), player -> {
             if (player.getInventory().firstEmpty() == -1) {
                 player.sendMessage(Component.translatable("waystones.ui.remove.inventoryfull", TextUtil.RED));
                 return;
@@ -176,7 +173,7 @@ public class NewScreens {
 
     private InputScreen createRenameScreen(@NotNull StoredWaystone waystone) {
         InputScreen.Builder builder = InputScreen.builder().title(Component.text("Waystone " + waystone.name())).plugin(plugin);
-        builder.content("Rename Waystone");
+        builder.label("Rename Waystone");
         builder.input(new InputScreen.Input(Component.text("Waystone Name"), waystone.name(), (player, input) -> {
 
             InputScreen.InputValidation nameValidation = validateWaystoneName(input);
@@ -202,7 +199,7 @@ public class NewScreens {
     private WaystoneSetupScreen createSettingsScreen(@NotNull StoredWaystone waystone) {
         return new WaystoneSetupScreen(
                 plugin,
-                Component.text("Waystone Bearbeiten"),
+                Component.text("Waystone " + waystone.name()),
                 "Waystone Name",
                 new WaystoneSetupScreen.Input("", (player, setupData) -> {
 
@@ -257,8 +254,8 @@ public class NewScreens {
 
     private InputScreen createChangeOwnerScreen(@NotNull StoredWaystone waystone) {
         OfflinePlayer owner = plugin.getServer().getOfflinePlayer(waystone.owner());
-        InputScreen.Builder builder = InputScreen.builder().title(Component.text("Waystone " + waystone.name())).content(owner.getName()).plugin(plugin);
-        builder.content("Change Owner");
+        InputScreen.Builder builder = InputScreen.builder().title(Component.text("Waystone " + waystone.name())).label(owner.getName()).plugin(plugin);
+        builder.label("Change Owner");
         builder.onExit((player) -> plugin.getScreen().accessSettings(player, waystone));
         builder.input(new InputScreen.Input(Component.text("New Owner"), "", (player, input) -> {
             if (input == null || input.isEmpty()) {
@@ -289,7 +286,7 @@ public class NewScreens {
 
     private InputScreen createAddPlayerScreen(@NotNull StoredWaystone waystone) {
         InputScreen.Builder builder = InputScreen.builder().title(Component.text("Add Access")).plugin(plugin);
-        builder.content("Add a Player");
+        builder.label("Add a Player");
         builder.onExit(player -> accessSettings(player, waystone));
         builder.input(new InputScreen.Input(Component.text("New Player"), "", (player, input) -> {
             if (input == null || input.isEmpty()) {
