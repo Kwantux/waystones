@@ -23,20 +23,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
-import org.incendo.cloud.bukkit.data.SingleEntitySelector;
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser;
-import org.incendo.cloud.bukkit.parser.PlayerParser;
 import org.incendo.cloud.bukkit.parser.WorldParser;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
-import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.parser.standard.BooleanParser;
 import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.parser.standard.StringArrayParser;
 import org.incendo.cloud.parser.standard.StringParser;
 
 import java.util.List;
@@ -58,6 +54,10 @@ public class WayStoneCommands extends CommandHandler {
 
     @Override
     public void register() {
+        commandManager.command(commandManager.commandBuilder("runcmd")
+                .required("command", StringArrayParser.stringArrayParser())
+                .handler(this::runCommandIfSenderIsPlayer)
+        );
         commandManager.command(commandManager.commandBuilder("waystone", "waystones")
                 .literal("menu")
                 .senderType(Player.class)
@@ -255,6 +255,15 @@ public class WayStoneCommands extends CommandHandler {
                 .permission("waystones.admin")
                 .handler(this::decreasePopularity)
         );
+    }
+
+    private void runCommandIfSenderIsPlayer(CommandContext<CommandSender> context) {
+        String[] args = context.get("command");
+        String command = String.join(" ", args);
+
+        if (context.sender() instanceof Player player) {
+            player.performCommand(command);
+        }
     }
 
     private void decreasePopularity(CommandContext<CommandSender> context) {

@@ -91,18 +91,18 @@ public class JavaScreens {
         Component current_page = Component.newline();
 
         if (mode == SortMode.ALPHABETICAL)
-            current_page = current_page.append(Component.text("    [A-Z]").color(colorSelected).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 1")));
+            current_page = current_page.append(Component.text("    [A-Z]").color(colorSelected).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 1")));
         else if (mode == SortMode.ALPHABETICAL_DESCENDING)
-            current_page = current_page.append(Component.text("    [A-Z]").color(colorSelectedInverted).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 0")));
+            current_page = current_page.append(Component.text("    [A-Z]").color(colorSelectedInverted).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 0")));
         else
-            current_page = current_page.append(Component.text("    [A-Z]").color(color).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 0")));
+            current_page = current_page.append(Component.text("    [A-Z]").color(color).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 0")));
 
         if (mode == SortMode.POPULARITY)
-            current_page = current_page.append(Component.text("    [★★★]").color(colorSelected).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 3")));
+            current_page = current_page.append(Component.text("    [★★★]").color(colorSelected).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 3")));
         else if (mode == SortMode.POPULARITY_ASCENDING)
-            current_page = current_page.append(Component.text("    [★★★]").color(colorSelectedInverted).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 2")));
+            current_page = current_page.append(Component.text("    [★★★]").color(colorSelectedInverted).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 2")));
         else
-            current_page = current_page.append(Component.text("    [★★★]").color(color).clickEvent(ClickEvent.runCommand("/waystone internal sortingmode 2")));
+            current_page = current_page.append(Component.text("    [★★★]").color(color).clickEvent(ClickEvent.runCommand("/runcmd waystone internal sortingmode 2")));
 
         return current_page;
     }
@@ -129,7 +129,7 @@ public class JavaScreens {
         Component current_page = Component.empty();
 
         if (showControls) {
-            current_page = current_page.append(Component.text(" [ ◇ ]").color(TextColor.color(0, 10, 200)).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.browse"))).clickEvent(ClickEvent.runCommand("/waystone menu category")).append(Component.text("  [  \uD83D\uDD0D  ").append(Component.translatable("waystones.ui.search")).append(Component.text("  ]")).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.search"))).clickEvent(ClickEvent.runCommand("/waystone search"))));
+            current_page = current_page.append(Component.text(" [ ◇ ]").color(TextColor.color(0, 10, 200)).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.browse"))).clickEvent(ClickEvent.runCommand("/runcmd waystone menu category")).append(Component.text("  [  \uD83D\uDD0D  ").append(Component.translatable("waystones.ui.search")).append(Component.text("  ]")).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.search"))).clickEvent(ClickEvent.runCommand("/runcmd waystone search"))));
             current_page = current_page.append(Component.newline());
             current_page = current_page.append(Component.newline());
             counter = 1;
@@ -154,7 +154,7 @@ public class JavaScreens {
                 waystoneColor = NamedTextColor.YELLOW;
             }
 
-            current_page = current_page.append(Component.text("[★] ").color(waystoneColor).clickEvent(ClickEvent.runCommand("/waystone internal " + "favorite " + action + " " + waystone.id())));
+            current_page = current_page.append(Component.text("[★] ").color(waystoneColor).clickEvent(ClickEvent.runCommand("/runcmd waystone internal " + "favorite " + action + " " + waystone.id())));
 
             waystoneColor = NamedTextColor.BLACK;
 
@@ -181,7 +181,7 @@ public class JavaScreens {
                 hoverText = hoverText.append(Component.text("Pos: [" + waystone.block_x() + ", " + waystone.block_y() + ", " + waystone.block_z() + "]"));
             }
 
-            Component waystoneEntry = Component.text(waystone.name()).clickEvent(ClickEvent.runCommand("/waystone tp " + waystone.id())).color(waystoneColor).hoverEvent(HoverEvent.showText(hoverText));
+            Component waystoneEntry = Component.text(waystone.name()).clickEvent(ClickEvent.runCommand("/runcmd waystone tp " + waystone.id())).color(waystoneColor).hoverEvent(HoverEvent.showText(hoverText));
 
             current_page = current_page.append(waystoneEntry);
             current_page = current_page.append(Component.newline());
@@ -252,7 +252,7 @@ public class JavaScreens {
 
         current_page = current_page.append(Component.translatable("waystones.ui.access.title").color(TextColor.color(0, 10, 200)).decorate(TextDecoration.BOLD));
         current_page = current_page.append(Component.newline().decoration(TextDecoration.BOLD, false));
-        current_page = current_page.append(Component.translatable("waystones.ui.access.add").clickEvent(ClickEvent.runCommand("/waystone internal button access add " + waystone.id())));
+        current_page = current_page.append(Component.translatable("waystones.ui.access.add").clickEvent(ClickEvent.runCommand("/runcmd waystone internal button access add " + waystone.id())));
         current_page = current_page.append(Component.newline());
         current_page = current_page.append(Component.newline());
 
@@ -271,7 +271,7 @@ public class JavaScreens {
             }
 
             String name = p.getName();
-            current_page = current_page.append(Component.text("[X] ").color(TextUtil.RED).clickEvent(ClickEvent.runCommand("/waystone access " + waystone.id() + " remove " + name))).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.access.remove")));
+            current_page = current_page.append(Component.text("[X] ").color(TextUtil.RED).clickEvent(ClickEvent.runCommand("/runcmd waystone access " + waystone.id() + " remove " + name))).hoverEvent(HoverEvent.showText(Component.translatable("waystones.ui.access.remove")));
             current_page = current_page.append(Component.text(name));
             current_page = current_page.append(Component.newline());
 
@@ -343,7 +343,7 @@ public class JavaScreens {
                 current_page = Component.empty();
                 counter = 0;
             }
-            current_page = current_page.append(Component.text(category.name()).clickEvent(ClickEvent.runCommand("/waystone category set " + waystone.id() + " " + category.id() + " " + creation)));
+            current_page = current_page.append(Component.text(category.name()).clickEvent(ClickEvent.runCommand("/runcmd waystone category set " + waystone.id() + " " + category.id() + " " + creation)));
             current_page = current_page.append(Component.newline());
 
             player.openBook(Book.book(Component.empty(), Component.empty(), pages));
@@ -371,7 +371,7 @@ public class JavaScreens {
                 current_page = Component.empty();
                 counter = 0;
             }
-            current_page = current_page.append(Component.text(category.name()).clickEvent(ClickEvent.runCommand("/waystone menu category " + category.id())));
+            current_page = current_page.append(Component.text(category.name()).clickEvent(ClickEvent.runCommand("/runcmd waystone menu category " + category.id())));
             current_page = current_page.append(Component.newline());
 
             player.openBook(Book.book(Component.empty(), Component.empty(), pages));
