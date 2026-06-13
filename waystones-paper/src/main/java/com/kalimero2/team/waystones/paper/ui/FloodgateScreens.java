@@ -11,6 +11,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.component.DropdownComponent;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.SimpleForm;
@@ -18,6 +19,8 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -67,20 +70,20 @@ public class FloodgateScreens {
 
     }
 
-    public void list(Player player, String search, Category category) {
+    public void list(@Nonnull Player player, @Nonnull String search, @Nullable Category category) {
         SimpleForm.Builder builder = SimpleForm.builder().title("Waystones").content("Select a Waystone!");
 
         List<StoredWaystone> allWaystones = plugin.getManager().getWaystones(player.getWorld().getUID(), search);
         allWaystones = allWaystones.stream().filter(waystone -> waystone.category().equalsOrUndefined(category)).toList();
         final List<StoredWaystone> waystones;
-        if (search == null || search.isEmpty() || search.isBlank()){
+        if (search.isBlank()){
             waystones = allWaystones.stream().filter(waystone -> manager.canSee(waystone, player)).toList();
+            builder.button("-- Search --");
         } else {
             waystones = allWaystones.stream().filter(waystone -> manager.canTeleport(waystone, player)).toList();
-        }
-
-        if (waystones.isEmpty()) {
-            builder.content("No waystones found containing '" + search + "' in their name.");
+            if (waystones.isEmpty()) {
+                builder.content("No waystones found containing '" + search + "' in their name.");
+            }
         }
 
         for (StoredWaystone waystone : waystones) {
@@ -89,6 +92,11 @@ public class FloodgateScreens {
 
         builder.validResultHandler(simpleFormResponse -> {
             int clickedButtonId = simpleFormResponse.clickedButtonId();
+            if (search.isBlank()) clickedButtonId--;
+            if (clickedButtonId == -1) {
+                menu(player);
+                return;
+            }
             StoredWaystone waystone = waystones.get(clickedButtonId);
             player.chat("/waystone tp " + waystone.id());
         });

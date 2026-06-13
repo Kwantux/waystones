@@ -47,7 +47,7 @@ public class WaystonesScreen {
 
     public void menu(Player player, @Nullable StoredWaystone waystone) {
         if (plugin.isBedrockPlayer(player)) {
-            floodgateScreens.menu(player);
+            floodgateScreens.list(player, "", null);
         } else {
             java.menu(player, waystone);
         }
