@@ -1,23 +1,28 @@
 package com.kalimero2.team.waystones.paper.ui.screen;
 
 import com.kalimero2.team.waystones.paper.PaperWayStones;
+import com.kalimero2.team.waystones.paper.ui.util.DialogComponents;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.event.player.PlayerCustomClickEvent;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
-import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Material;
+import net.kyori.adventure.text.event.ClickCallback;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
-import java.util.Objects;
+import java.util.List;
 
 public class JavaInputScreen implements GenericScreen, Listener {
 
     private final PaperWayStones plugin;
     private final InputScreen inputScreen;
-    public static final Component anvilUIPrefix = MiniMessage.miniMessage().deserialize("<white><tr:space.-60><font:klm2:waystones>c</font><tr:space.-172><reset>");
 
     protected JavaInputScreen(InputScreen inputScreen) {
         this.plugin = inputScreen.getPlugin();
@@ -27,29 +32,41 @@ public class JavaInputScreen implements GenericScreen, Listener {
 
     @Override
     public void open(Player player) {
-        ItemStack left = Objects.requireNonNullElse(inputScreen.getInput().itemLeft(), JavaButtonScreen.getButton(Component.text("Cancel"), 4, Material.PAPER));
-        ItemStack result = Objects.requireNonNullElse(inputScreen.getInput().itemResult(), JavaButtonScreen.getButton(Component.text("Confirm"), 5, Material.PAPER));
+        open(player, "", "");
+    }
+    private void open(Player player, String initialText, String errorMessage) {
 
-        Component title = anvilUIPrefix.append(inputScreen.getTitle());
-        String jsonTitle = JSONComponentSerializer.json().serialize(title);
+        Dialog dialog = Dialog.create(builder -> builder.empty()
+                .base(
+                        DialogBase.builder(inputScreen.getTitle())
+                                .inputs(List.of(
+                                        DialogInput.text("input", Component.text(inputScreen.getLabel())).maxLength(inputScreen.getMaxLength()).initial(initialText).build()
+                                ))
+                                .body(List.of(
+                                        DialogBody.plainMessage(Component.text(errorMessage))
+                                ))
+                                .canCloseWithEscape(true)
+                                .build()
+                )
+                .type(DialogType.confirmation(
+                        DialogComponents.confirmButton(
+                            (view, audience) -> {
+                                        String text = view.getText("input").strip();
+                                        InputScreen.InputValidation inputValidation = inputScreen.getInput().onSubmitted().apply(player, text);
+                                        if (!inputValidation.valid()) {
+                                            open(player, text, inputValidation.message());
+                                        }
+                            }
+                        ),
+                        inputScreen.hasOnExit() ?
+                                DialogComponents.backButton((view, audience) -> {
+                                    inputScreen.callOnExit(player);
+                                }) :
+                                DialogComponents.discardButton()
 
-        new AnvilGUI.Builder().jsonTitle(jsonTitle).itemLeft(left).itemOutput(result).text(inputScreen.getInput().placeholder()).onClick((n, state) -> {
-            if (n == 0) {
-                return Collections.singletonList(AnvilGUI.ResponseAction.close());
-            } else if (n == 1) {
-                player.sendActionBar(Component.text("Wie hast du diesen Knopf gefunden?"));
-                return Collections.singletonList(AnvilGUI.ResponseAction.close());
-            }
-
-            InputScreen.InputValidation inputValidation = inputScreen.getInput().onSubmitted().apply(player, state.getText());
-
-            if (!inputValidation.valid()) {
-                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(inputValidation.message()));
-            }
-
-            return Collections.singletonList(AnvilGUI.ResponseAction.close());
-        }).plugin(plugin).open(player);
-
+                ))
+        );
+        player.showDialog(dialog);
     }
 
 }

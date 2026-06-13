@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.incendo.cloud.bukkit.data.SingleEntitySelector;
+import org.incendo.cloud.bukkit.parser.OfflinePlayerParser;
 import org.incendo.cloud.bukkit.parser.PlayerParser;
 import org.incendo.cloud.bukkit.parser.WorldParser;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
@@ -172,14 +173,14 @@ public class WayStoneCommands extends CommandHandler {
                 .literal("access")
                 .required(WaystoneComponent.of("waystone"))
                 .literal("add")
-                .required("player", PlayerParser.playerParser())
+                .required("player", OfflinePlayerParser.offlinePlayerParser())
                 .handler(this::addPlayerToAccessList)
         );
         commandManager.command(commandManager.commandBuilder("waystone", "waystones")
                 .literal("access")
                 .required(WaystoneComponent.of("waystone"))
                 .literal("remove")
-                .required("player", PlayerParser.playerParser())
+                .required("player", OfflinePlayerParser.offlinePlayerParser())
                 .handler(this::removePlayerFromAccessList)
         );
         commandManager.command(commandManager.commandBuilder("waystone", "waystones")
@@ -248,28 +249,12 @@ public class WayStoneCommands extends CommandHandler {
                 .handler(this::buttonAddAccess)
         );
 
-
         commandManager.command(commandManager.commandBuilder("waystone", "waystones")
                 .literal("popularity")
                 .literal("decrease")
                 .permission("waystones.admin")
                 .handler(this::decreasePopularity)
         );
-
-        commandManager.command(commandManager.commandBuilder("waystone", "waystones")
-                .literal("trader")
-                .literal("mark")
-                .required("entity", SingleEntitySelectorParser.singleEntitySelectorParser())
-                .permission("waystones.trader.mark")
-                .handler(this::markTrader)
-        );
-    }
-
-    private void markTrader(CommandContext<CommandSender> context) {
-        SingleEntitySelector entitySelector = context.get("entity");
-
-        Entity entity = entitySelector.single();
-        entity.getPersistentDataContainer().set(new NamespacedKey("waystones", "trader"), PersistentDataType.BYTE, (byte) 1);
     }
 
     private void decreasePopularity(CommandContext<CommandSender> context) {
@@ -478,28 +463,28 @@ public class WayStoneCommands extends CommandHandler {
         CommandSender sender = context.sender();
 
         StoredWaystone waystone = context.get("waystone");
-        Player target = context.get("player");
+        OfflinePlayer target = context.get("player");
 
         if (sender instanceof Player player) {
             if (!waystone.owner().equals(player.getUniqueId()) && !player.hasPermission("waystones.admin")) return;
         }
 
         manager.addAccess(target, waystone.id());
-        sender.sendMessage(Component.translatable("waystones.access.add", TextUtil.GREEN, target.displayName(), Component.text(waystone.id().toString())));
+        sender.sendMessage(Component.translatable("waystones.access.add", TextUtil.GREEN, Component.text(target.getName()), Component.text(waystone.id().toString())));
     }
 
     private void removePlayerFromAccessList(CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
 
         StoredWaystone waystone = context.get("waystone");
-        Player target = context.get("player");
+        OfflinePlayer target = context.get("player");
 
         if (sender instanceof Player player) {
             if (!waystone.owner().equals(player.getUniqueId()) && !player.hasPermission("waystones.admin")) return;
         }
 
         manager.removeAccess(target, waystone.id());
-        sender.sendMessage(Component.translatable("waystones.access.remove", TextUtil.GREEN, target.displayName(), Component.text(waystone.name())));
+        sender.sendMessage(Component.translatable("waystones.access.remove", TextUtil.GREEN, Component.text(target.getName()), Component.text(waystone.name())));
     }
 
     private void showAccessList(CommandContext<CommandSender> context) {

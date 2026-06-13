@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class InputScreen implements GenericScreen {
@@ -16,12 +17,16 @@ public class InputScreen implements GenericScreen {
     private final Component title;
     private final String label;
     private final Input input;
+    private final int maxLength;
+    private final Consumer<Player> onExit;
 
-    private InputScreen(PaperWayStones plugin, Component title, String label, Input input) {
+    private InputScreen(PaperWayStones plugin, Component title, String label, Input input, int maxLength, Consumer<Player> onExit) {
         this.plugin = plugin;
         this.title = title;
         this.label = label;
         this.input = input;
+        this.maxLength = maxLength;
+        this.onExit = onExit;
         this.javaScreen = new JavaInputScreen(this);
         this.floodgateScreen = new FloodgateInputScreen(this);
     }
@@ -46,6 +51,20 @@ public class InputScreen implements GenericScreen {
         return input;
     }
 
+    protected int getMaxLength() {
+        return maxLength;
+    }
+
+    protected boolean hasOnExit() {
+        return onExit != null;
+    }
+
+    protected void callOnExit(Player player) {
+        if (hasOnExit()) {
+            onExit.accept(player);
+        }
+    }
+
     @Override
     public void open(Player player) {
         if (plugin.isBedrockPlayer(player)) {
@@ -60,6 +79,8 @@ public class InputScreen implements GenericScreen {
         private Component title;
         private String content;
         private Input input;
+        private int maxLength = 20;
+        private Consumer<Player> onExit = null;
 
         public Builder plugin(PaperWayStones plugin) {
             this.plugin = plugin;
@@ -81,8 +102,21 @@ public class InputScreen implements GenericScreen {
             return this;
         }
 
+        /**
+         * Sets the maximum length for inputs (only applicable for Java players).
+         */
+        public Builder maxLength(int maxLength) {
+            this.maxLength = maxLength;
+            return this;
+        }
+
+        public Builder onExit(Consumer<Player> onExit) {
+            this.onExit = onExit;
+            return this;
+        }
+
         public InputScreen build() {
-            return new InputScreen(plugin, title, content, input);
+            return new InputScreen(plugin, title, content, input, maxLength, onExit);
         }
     }
 

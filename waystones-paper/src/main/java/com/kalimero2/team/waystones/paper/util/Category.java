@@ -9,7 +9,6 @@ public record Category(int id, String name, boolean isPublic) {
         return isPublic || player.hasPermission("waystones.category");
     }
 
-
     public boolean equalsOrUndefined(Category other) {
         return this == other || other == null || other.equals(NONE);
     }

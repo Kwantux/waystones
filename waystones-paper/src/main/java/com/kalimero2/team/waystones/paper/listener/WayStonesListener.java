@@ -48,11 +48,11 @@ public class WayStonesListener implements Listener {
             return;
         }
 
-        if (plugin.claimsIntegration != null) {
-            if (plugin.claimsIntegration.shouldCancel(event.getBlock().getChunk(), event.getPlayer())) {
-                return;
-            }
-        }
+//        if (plugin.claimsIntegration != null) {
+//            if (plugin.claimsIntegration.shouldCancel(event.getBlock().getChunk(), event.getPlayer())) {
+//                return;
+//            }
+//        }
 
         ItemStack stack = event.getItemInHand();
         ItemMeta meta = stack.getItemMeta();

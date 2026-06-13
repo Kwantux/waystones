@@ -101,11 +101,15 @@ public class WaystonesScreen {
         if (plugin.isBedrockPlayer(player)) {
             floodgateScreens.accessRemove(player, waystone);
         } else {
-            java.accessSettings(player, waystone);
+            java.removeAccess(player, waystone);
         }
     }
 
     public void transferOwnership(Player player, StoredWaystone waystone) {
         newScreens.changeOwner(player, waystone);
+    }
+
+    public void delete(Player player, StoredWaystone waystone) {
+        newScreens.delete(player, waystone);
     }
 }

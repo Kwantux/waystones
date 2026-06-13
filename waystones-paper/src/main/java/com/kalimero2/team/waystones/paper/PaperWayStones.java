@@ -1,7 +1,7 @@
 package com.kalimero2.team.waystones.paper;
 
 import com.kalimero2.team.waystones.paper.command.CommandManager;
-import com.kalimero2.team.waystones.paper.compat.ClaimsIntegration;
+//import com.kalimero2.team.waystones.paper.compat.ClaimsIntegration;
 import com.kalimero2.team.waystones.paper.compat.GeyserWaystoneHackCompat;
 import com.kalimero2.team.waystones.paper.display.DisplayManager;
 import com.kalimero2.team.waystones.paper.listener.TradeListener;
@@ -33,12 +33,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class PaperWayStones extends JavaPlugin {
-    public boolean floodgateIntegration = false;
-    public @Nullable ClaimsIntegration claimsIntegration;
 
-    private WaystoneManager manager;
-    private DisplayManager displayManager;
-    private WaystonesScreen screen;
+    public boolean floodgateIntegration = false;
+//    public @Nullable ClaimsIntegration claimsIntegration;
+
+    public static WaystoneManager manager;
+    public static DisplayManager displayManager;
+    public static WaystonesScreen screen;
 
     public double decayFactor = 1.25;
 
@@ -52,15 +53,15 @@ public class PaperWayStones extends JavaPlugin {
         registry.registerAll(Locale.GERMANY, bundle, true);
         GlobalTranslator.translator().addSource(registry);
 
-        // Claims Compat
-        try {
-            Class.forName("com.kalimero2.team.claims.api.ClaimsApi");
-            claimsIntegration = new ClaimsIntegration();
-            getLogger().info("Claims integration enabled");
-        } catch (ClassNotFoundException e) {
-            claimsIntegration = null;
-            getLogger().info("Claims not found, disabling Claims integration");
-        }
+//        // Claims Compat
+//        try {
+//            Class.forName("com.kalimero2.team.claims.api.ClaimsApi");
+//            claimsIntegration = new ClaimsIntegration();
+//            getLogger().info("Claims integration enabled");
+//        } catch (ClassNotFoundException e) {
+//            claimsIntegration = null;
+//            getLogger().info("Claims not found, disabling Claims integration");
+//        }
 
         // Display Manager
         displayManager = new DisplayManager(this);

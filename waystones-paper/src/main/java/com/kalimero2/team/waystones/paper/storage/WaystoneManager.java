@@ -453,6 +453,7 @@ public class WaystoneManager {
      * @param id the ID of the waystone
      */
     public void addAccess(OfflinePlayer player, UUID id) {
+        if (hasAccess(player, id)) return;
         getAccess(id).add(player);
         storage.addAccess(player, id);
     }

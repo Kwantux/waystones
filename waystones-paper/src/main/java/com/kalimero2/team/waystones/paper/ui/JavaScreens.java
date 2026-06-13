@@ -3,38 +3,36 @@ package com.kalimero2.team.waystones.paper.ui;
 import com.kalimero2.team.waystones.paper.PaperWayStones;
 import com.kalimero2.team.waystones.paper.storage.StoredWaystone;
 import com.kalimero2.team.waystones.paper.storage.WaystoneManager;
+import com.kalimero2.team.waystones.paper.ui.util.DialogComponents;
 import com.kalimero2.team.waystones.paper.util.Category;
 import com.kalimero2.team.waystones.paper.util.SortMode;
 import com.kalimero2.team.waystones.paper.util.TextUtil;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.kalimero2.team.waystones.paper.ui.screen.JavaInputScreen.anvilUIPrefix;
 
 public class JavaScreens {
 
@@ -201,39 +199,41 @@ public class JavaScreens {
     }
 
     public void search(Player player, @Nullable String searchTerm) {
-        Component title = anvilUIPrefix.append(Component.text(searchTerm == null ? "Name des Waystones oder Teile des Namen" : "Es gibt keinen Waystone dessen Name '" + searchTerm + "' enthält."));
-        String jsonTitle = JSONComponentSerializer.json().serialize(title);
-
-        if (searchTerm == null) searchTerm = "Suchbegriff";
-
-        ItemStack item = new ItemStack(Material.ITEM_FRAME);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text(searchTerm));
-        item.setItemMeta(meta);
-
-        new AnvilGUI.Builder().jsonTitle(jsonTitle).itemLeft(item).itemOutput(item).onClick((n, state) -> {
-            if (state.getText().length() > 16) {
-                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText("Maximal 16 Zeichen!"));
-            }
-            List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), state.getText());
-            if (waystones.isEmpty()) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        search(player, state.getText());
-                    }
-                }.runTaskLater(plugin, 1);
-                return Collections.singletonList(AnvilGUI.ResponseAction.close());
-            } else {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        list(player, state.getText());
-                    }
-                }.runTaskLater(plugin, 1);
-            }
-            return Collections.singletonList(AnvilGUI.ResponseAction.close());
-        }).plugin(plugin).open(player);
+//        Component title = anvilUIPrefix.append(Component.text(searchTerm == null ? "Waystone name or part of the name" : "No waystone found containing '" + searchTerm + "' in its name."));
+//        String jsonTitle = JSONComponentSerializer.json().serialize(title);
+//
+//        if (searchTerm == null) searchTerm = "Search term";
+//
+//        ItemStack item = new ItemStack(Material.ITEM_FRAME);
+//        ItemMeta meta = item.getItemMeta();
+//        meta.displayName(Component.text(searchTerm));
+//        item.setItemMeta(meta);
+//
+//        new AnvilGUI.Builder().jsonTitle(jsonTitle).itemLeft(item).itemOutput(item).onClick((n, state) -> {
+//            if (state.getText().length() > 16) {
+//                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText("Maximal 16 Zeichen!"));
+//            }
+//            List<StoredWaystone> waystones = manager.getWaystones(player.getWorld().getUID(), state.getText());
+//            if (waystones.isEmpty()) {
+//                new BukkitRunnable() {
+//                    @Override
+//                    public void run() {
+//                        search(player, state.getText());
+//                    }
+//                }.runTaskLater(plugin, 1);
+//                return Collections.singletonList(AnvilGUI.ResponseAction.close());
+//            } else {
+//                new BukkitRunnable() {
+//                    @Override
+//                    public void run() {
+//                        list(player, state.getText());
+//                    }
+//                }.runTaskLater(plugin, 1);
+//            }
+//            return Collections.singletonList(AnvilGUI.ResponseAction.close());
+//        }).plugin(plugin).open(player);
+        // TODO: implement
+        player.sendMessage(Component.text("TODO: implement"));
 
     }
 
@@ -245,7 +245,7 @@ public class JavaScreens {
         player.openBook(Book.book(Component.empty(), Component.empty(), pages));
     }
 
-    public void accessSettings(Player player, StoredWaystone waystone) {
+    public void oldAccessSettings(Player player, StoredWaystone waystone) {
         List<Component> pages = new ArrayList<>();
         Component current_page = Component.empty();
         int counter = 4;
@@ -282,6 +282,53 @@ public class JavaScreens {
 
         player.openBook(Book.book(Component.empty(), Component.empty(), pages));
 
+    }
+
+    public void removeAccess(Player player, StoredWaystone waystone) {
+
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(DialogComponents.backButton((view, audience) -> plugin.getScreen().accessSettings((Player) audience, waystone)));
+
+        buttons.addAll(manager.getAccess(waystone.id()).stream().map(offlinePlayer ->
+            ActionButton.create(
+                    Component.text("[x] ", TextColor.color(0xFFA0B1)).append(Component.text(offlinePlayer.getName(), TextColor.color(0xFFFFFF))),
+                    Component.text("Click to revoke this player's access."),
+                    200,
+                    DialogAction.customClick(
+                            (view, audience) -> {
+                                manager.removeAccess(offlinePlayer, waystone.id());
+                                removeAccess(player, waystone);
+                            },
+                            ClickCallback.Options.builder()
+                                    .uses(100) // Set the number of uses for this callback. Defaults to 1
+                                    .lifetime(ClickCallback.DEFAULT_LIFETIME) // Set the lifetime of the callback. Defaults to 12 hours
+                                    .build()
+                    )
+            )
+        ).toList());
+
+        if (buttons.isEmpty()) {
+            Dialog dialog = Dialog.create(builder -> builder.empty()
+                    .base(
+                            DialogBase.builder(Component.text("Revoke Access"))
+                                    .canCloseWithEscape(true)
+                                    .body(List.of(DialogBody.plainMessage(Component.text("Noone has access to this waystone yet."))))
+                                    .build()
+                    )
+                    .type(DialogType.notice())
+            );
+            player.showDialog(dialog);
+        }
+
+        Dialog dialog = Dialog.create(builder -> builder.empty()
+                .base(
+                        DialogBase.builder(Component.text("Access settings"))
+                                .canCloseWithEscape(true)
+                                .build()
+                )
+                .type(DialogType.multiAction(buttons).columns(1).build())
+        );
+        player.showDialog(dialog);
     }
 
     public void categorySelection(Player player, @NotNull StoredWaystone waystone, boolean creation) {

@@ -1,19 +1,13 @@
 package com.kalimero2.team.waystones.paper.listener;
 
 import com.kalimero2.team.waystones.paper.PaperWayStones;
-import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
 
 import java.util.ArrayList;
@@ -23,37 +17,57 @@ public class TradeListener implements Listener {
 
     private final PaperWayStones plugin;
 
+    private final MerchantRecipe waystoneRecipe;
+    private final MerchantRecipe portableWaystoneRecipe;
+
+    private final static int MAX_TRADES_WAYSTONE = 1;
+    private final static int MAX_TRADES_PORTABLE_WAYSTONE = 1;
+    private final static float CHANCE_ADDITIONAL_WAYSTONE_TRADE = 0;
+    private final static float CHANCE_ADDITIONAL_PORTABLE_WAYSTONE_TRADE = 0;
+    private final static float CHANCE_REPLACE_TRADES = 0.2f;
+    private final static boolean EXPERIENCE_REWARD = false;
+
     public TradeListener(PaperWayStones plugin){
         this.plugin = plugin;
+
+        waystoneRecipe = new MerchantRecipe(plugin.getStatic(), 0, MAX_TRADES_WAYSTONE, EXPERIENCE_REWARD);
+        waystoneRecipe.addIngredient(new ItemStack(Material.NETHERITE_INGOT, 2));
+        waystoneRecipe.addIngredient(new ItemStack(Material.ENDER_EYE, 1));
+
+        portableWaystoneRecipe = new MerchantRecipe(plugin.getPortable(), 0, MAX_TRADES_PORTABLE_WAYSTONE, EXPERIENCE_REWARD);
+        portableWaystoneRecipe.addIngredient(plugin.getStatic());
+        portableWaystoneRecipe.addIngredient(new ItemStack(Material.NETHER_STAR, 1));
+
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
-    public void onEntityInteract(PrePlayerAttackEntityEvent event) {
-        if (event.getAttacked() instanceof ArmorStand armorStand) {
-            if (armorStand.getPersistentDataContainer().has(new NamespacedKey("waystones", "trader"))) {
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        if (event.getEntityType() != EntityType.WANDERING_TRADER) return;
+        if (!(event.getEntity() instanceof WanderingTrader)) return;
 
-                Merchant merchant = Bukkit.createMerchant(Component.text("Waystone Händlerin"));
-                List<MerchantRecipe> recipes = new ArrayList<>();
+        WanderingTrader trader = (WanderingTrader) event.getEntity();
+        List<MerchantRecipe> trades = new ArrayList<>();
 
-                MerchantRecipe wayStone = new MerchantRecipe(plugin.getStatic(), 0, 99, false);
-
-                wayStone.addIngredient(new ItemStack(Material.NETHERITE_INGOT, 2));
-                wayStone.addIngredient(new ItemStack(Material.ENDER_EYE, 1));
-
-                recipes.add(wayStone);
-
-                MerchantRecipe portableWayStone = new MerchantRecipe(plugin.getPortable(), 0, 99, false);
-
-                portableWayStone.addIngredient(plugin.getStatic());
-                portableWayStone.addIngredient(new ItemStack(Material.NETHER_STAR, 1));
-
-                recipes.add(portableWayStone);
-
-                merchant.setRecipes(recipes);
-                event.getPlayer().openMerchant(merchant, true);
-            }
+        if (Math.random() < CHANCE_REPLACE_TRADES) {
+            trades.add(waystoneRecipe);
+            trades.add(portableWaystoneRecipe);
+            trader.setRecipes(trades);
+            return;
         }
+
+        if (Math.random() < CHANCE_ADDITIONAL_WAYSTONE_TRADE) {
+            MerchantRecipe wayStone = new MerchantRecipe(plugin.getStatic(), 0, MAX_TRADES_WAYSTONE, EXPERIENCE_REWARD);
+            trades.add(wayStone);
+        }
+
+        if (Math.random() < CHANCE_ADDITIONAL_PORTABLE_WAYSTONE_TRADE) {
+            MerchantRecipe portableWayStone = new MerchantRecipe(plugin.getPortable(), 0, MAX_TRADES_PORTABLE_WAYSTONE, EXPERIENCE_REWARD);
+            trades.add(portableWayStone);
+        }
+
+        trades.addAll(trader.getRecipes());
+        trader.setRecipes(trades);
     }
 
 

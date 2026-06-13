@@ -33,7 +33,7 @@ public class FloodgateButtonScreen implements GenericScreen {
         SimpleForm.Builder builder = SimpleForm.builder();
         String title = TextUtil.compomentToString(buttonScreen.getTitle());
         builder.title(title);
-        builder.content(buttonScreen.getLabel());
+        builder.content(buttonScreen.getLabel().examinableName());
 
         buttonScreen.getButtons().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(ButtonScreen.Button::slot)))
@@ -52,6 +52,8 @@ public class FloodgateButtonScreen implements GenericScreen {
                 consumer.accept(player);
             }
         });
+
+        builder.closedResultHandler(() -> buttonScreen.onExit(player));
 
         FloodgatePlayer floodgatePlayer = FloodgateApi.getInstance().getPlayer(player.getUniqueId());
         floodgatePlayer.sendForm(builder.build());

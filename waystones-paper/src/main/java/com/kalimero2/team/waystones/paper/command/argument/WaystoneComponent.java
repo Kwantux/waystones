@@ -11,9 +11,10 @@ import org.incendo.cloud.parser.standard.StringParser;
 
 import java.util.UUID;
 
+import static com.kalimero2.team.waystones.paper.PaperWayStones.manager;
+
 
 public final class WaystoneComponent {
-    private static final WaystoneManager manager = PaperWayStones.getPlugin(PaperWayStones.class).getManager();
 
     public static TypedCommandComponent.Builder<CommandSender, StoredWaystone> of(final String name) {
         return CommandComponent.<CommandSender, StoredWaystone>ofType(StoredWaystone.class, name)

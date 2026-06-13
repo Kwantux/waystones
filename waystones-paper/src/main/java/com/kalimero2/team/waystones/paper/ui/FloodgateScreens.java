@@ -33,9 +33,9 @@ public class FloodgateScreens {
     }
 
     public void menu(Player player) {
-        CustomForm.Builder builder = CustomForm.builder().title("Waystones").label("Wähle einen Waystone aus!");
+        CustomForm.Builder builder = CustomForm.builder().title("Waystones").label("Select a Waystone!");
 
-        builder.input("Suchen", "Waystone Namen hier eingeben", "");
+        builder.input("Search", "Enter Waystone name here", "");
 
         DropdownComponent.Builder dropdownBuilder = DropdownComponent.builder();
         dropdownBuilder.option("Alphabetisch");
@@ -68,7 +68,7 @@ public class FloodgateScreens {
     }
 
     public void list(Player player, String search, Category category) {
-        SimpleForm.Builder builder = SimpleForm.builder().title("Waystones").content("Wähle einen Waystone aus!");
+        SimpleForm.Builder builder = SimpleForm.builder().title("Waystones").content("Select a Waystone!");
 
         List<StoredWaystone> allWaystones = plugin.getManager().getWaystones(player.getWorld().getUID(), search);
         allWaystones = allWaystones.stream().filter(waystone -> waystone.category().equalsOrUndefined(category)).toList();
@@ -80,7 +80,7 @@ public class FloodgateScreens {
         }
 
         if (waystones.isEmpty()) {
-            builder.content("Es konnten keine Waystones gefunden werden, dessen Name '" + search + "' enthält.");
+            builder.content("No waystones found containing '" + search + "' in their name.");
         }
 
         for (StoredWaystone waystone : waystones) {
@@ -115,16 +115,16 @@ public class FloodgateScreens {
 
         switch (lcr) {
             case NAME_TAKEN -> {
-                builder.label("Dieser Name ist bereits vergeben! Bitte wähle einen anderen Namen.");
+                builder.label("This name is already taken! Please choose a different name.");
             }
             case CATEGORY_PRIVATE -> {
-                builder.label("Diese Kategorie ist nur für Teammitglieder verfügbar! Bitte wähle eine andere Kategorie.");
+                builder.label("This category is only available for team members! Please choose a different category.");
             }
             case CATEGORY_INVALID -> {
-                builder.label("Diese Kategorie existiert nicht! Bitte wähle eine andere Kategorie.");
+                builder.label("This category does not exist! Please choose a different category.");
             }
             case PLAYER_INVALID -> {
-                builder.label("Dieser Spieler existiert nicht.");
+                builder.label("This player does not exist.");
             }
             default -> {
                 builder.label("Setze die Kategorie deines Waystones");

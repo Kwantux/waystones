@@ -41,6 +41,8 @@ public class FloodgateInputScreen implements GenericScreen {
             open(player, inputValidation);
         });
 
+        builder.closedResultHandler(() -> inputScreen.callOnExit(player));
+
         FloodgatePlayer floodgatePlayer = FloodgateApi.getInstance().getPlayer(player.getUniqueId());
         floodgatePlayer.sendForm(builder.build());
     }
