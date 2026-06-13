@@ -14,7 +14,7 @@ public class TextUtil {
 
 
     @NotNull
-    public static String compomentToString(Component title) {
+    public static String componentToString(Component title) {
         return PlainTextComponentSerializer.plainText().serialize(title);
     }
 }

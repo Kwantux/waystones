@@ -2,14 +2,13 @@ package com.kalimero2.team.waystones.paper.ui.screen;
 
 import com.kalimero2.team.waystones.paper.PaperWayStones;
 import com.kalimero2.team.waystones.paper.storage.StoredWaystone;
+import com.kalimero2.team.waystones.paper.ui.WaystonesScreen;
 import com.kalimero2.team.waystones.paper.util.Category;
 import com.kalimero2.team.waystones.paper.util.Visibility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.BiFunction;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -17,7 +16,7 @@ public class WaystoneSetupScreen implements GenericScreen {
 
     private final PaperWayStones plugin;
     private final JavaWaystoneSetupScreen javaScreen;
-    private final FloodgateWaystoneSetupScreen floodgateScreen;
+    private final GenericScreen floodgateScreen;
     private final Component title;
     private final String label;
     private final Input input;
@@ -32,7 +31,19 @@ public class WaystoneSetupScreen implements GenericScreen {
         this.maxLength = maxLength;
         this.waystone = waystone;
         this.javaScreen = new JavaWaystoneSetupScreen(this);
-        this.floodgateScreen = new FloodgateWaystoneSetupScreen(this);
+        FloodgateWaystoneSetupScreen floodgateSetupScreen = new FloodgateWaystoneSetupScreen(this);
+
+        if (waystone != null) {
+            WaystonesScreen waystonesScreen = plugin.getScreen();
+            this.floodgateScreen = ButtonScreen.builder().plugin(plugin)
+                    .title(title)
+                    .label(Component.text(label))
+                    .button(new ButtonScreen.Button(Component.text("Edit Waystone"), 0, 0), floodgateSetupScreen::open)
+                    .button(new ButtonScreen.Button(Component.text("Manage Access"), 0, 0), player -> waystonesScreen.accessSettings(player, waystone))
+                    .button(new ButtonScreen.Button(Component.text("Delete Waystone"), 0, 0), player -> waystonesScreen.delete(player, waystone))
+                    .build();
+        }
+        else this.floodgateScreen = floodgateSetupScreen;
     }
 
     protected PaperWayStones getPlugin() {

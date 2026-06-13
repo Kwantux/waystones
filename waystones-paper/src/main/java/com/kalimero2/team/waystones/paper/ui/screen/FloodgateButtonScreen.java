@@ -1,14 +1,11 @@
 package com.kalimero2.team.waystones.paper.ui.screen;
 
 import com.kalimero2.team.waystones.paper.util.TextUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,16 +28,16 @@ public class FloodgateButtonScreen implements GenericScreen {
     @SuppressWarnings("deprecation")
     public void open(Player player) {
         SimpleForm.Builder builder = SimpleForm.builder();
-        String title = TextUtil.compomentToString(buttonScreen.getTitle());
+        String title = TextUtil.componentToString(buttonScreen.getTitle());
         builder.title(title);
-        builder.content(buttonScreen.getLabel().examinableName());
+        builder.content(TextUtil.componentToString(buttonScreen.getLabel()));
 
         buttonScreen.getButtons().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(ButtonScreen.Button::slot)))
                 .forEach(entry -> {
                     ButtonScreen.Button button = entry.getKey();
                     Consumer<Player> consumer = entry.getValue();
-                    ButtonComponent buttonComponent = ButtonComponent.of(TextUtil.compomentToString(button.name()));
+                    ButtonComponent buttonComponent = ButtonComponent.of(TextUtil.componentToString(button.name()));
                     buttons.put(buttonComponent, consumer);
                     builder.button(buttonComponent);
                 });

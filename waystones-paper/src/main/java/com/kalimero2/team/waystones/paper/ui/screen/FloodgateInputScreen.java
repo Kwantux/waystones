@@ -1,13 +1,10 @@
 package com.kalimero2.team.waystones.paper.ui.screen;
 
 import com.kalimero2.team.waystones.paper.util.TextUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
-import org.jetbrains.annotations.NotNull;
 
 public class FloodgateInputScreen implements GenericScreen {
 
@@ -24,7 +21,7 @@ public class FloodgateInputScreen implements GenericScreen {
     }
 
     private void open(Player player, InputScreen.InputValidation lastValidation) {
-        CustomForm.Builder builder = CustomForm.builder().title(TextUtil.compomentToString(inputScreen.getTitle()));
+        CustomForm.Builder builder = CustomForm.builder().title(TextUtil.componentToString(inputScreen.getTitle()));
 
         builder.input(inputScreen.getLabel(), inputScreen.getInput().placeholder(), inputScreen.getInput().placeholder());
         if (lastValidation != null) {

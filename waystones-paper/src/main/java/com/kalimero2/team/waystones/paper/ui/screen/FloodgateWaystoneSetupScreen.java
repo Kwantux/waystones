@@ -9,6 +9,7 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static com.kalimero2.team.waystones.paper.PaperWayStones.manager;
 
@@ -23,20 +24,34 @@ public class FloodgateWaystoneSetupScreen implements GenericScreen {
 
     @Override
     public void open(Player player) {
-        open(player, null);
+        open(player, null, "", 0, 0);
     }
 
-    private void open(Player player, InputScreen.InputValidation lastValidation) {
-        CustomForm.Builder builder = CustomForm.builder().title(TextUtil.compomentToString(setupScreen.getTitle()));
+    private void open(Player player, InputScreen.InputValidation lastValidation, String defaultName, int defaultVisibility, int defaultCategory) {
+        CustomForm.Builder builder = CustomForm.builder().title(TextUtil.componentToString(setupScreen.getTitle()));
 
-        builder.input(setupScreen.getLabel(), setupScreen.getInput().placeholder(), setupScreen.getInput().placeholder());
+        Category[] categories = manager.getCategories().toArray(new Category[0]);
+
+        if (setupScreen.getWaystone() != null && defaultName.isBlank()) {
+            defaultName = setupScreen.getWaystone().name();
+            defaultVisibility = setupScreen.getWaystone().visibility().id();
+            Category waystoneCategory = setupScreen.getWaystone().category();
+            for (int i = 0; i < categories.length; i++) {
+                if (categories[i].equals(waystoneCategory)) {
+                    defaultCategory = i;
+                    break;
+                }
+            }
+        }
+
+        builder.input(setupScreen.getLabel(), setupScreen.getInput().placeholder(), defaultName);
         if (lastValidation != null) {
             builder.label(lastValidation.message());
         }
 
-        builder.stepSlider("Visibility", "Public", "Unlisted", "Private");
-        Category[] categories = manager.getCategories().toArray(new Category[0]);
-        builder.dropdown("Category", Arrays.stream(categories).map(Category::name).toList());
+        builder.stepSlider("Visibility", List.of("Public", "Unlisted", "Private"), defaultVisibility);
+
+        builder.dropdown("Category", Arrays.stream(categories).map(Category::name).toList(), defaultCategory);
 
         builder.validResultHandler(customFormResponse -> {
             String name = customFormResponse.asInput(0);
@@ -47,7 +62,7 @@ public class FloodgateWaystoneSetupScreen implements GenericScreen {
             if (inputValidation.valid()) {
                 return;
             }
-            open(player, inputValidation);
+            open(player, inputValidation, name, visibility.id(), category.id());
         });
 
         FloodgatePlayer floodgatePlayer = FloodgateApi.getInstance().getPlayer(player.getUniqueId());
