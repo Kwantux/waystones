@@ -9,8 +9,6 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-//    maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
-//    maven("https://repo.kalimero2.com/releases")
     maven("https://repo.opencollab.dev/maven-snapshots/")
     maven("https://repo.opencollab.dev/maven-releases/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
@@ -20,10 +18,8 @@ repositories {
 dependencies {
     bukkitLibrary(libs.cloud.paper)
     bukkitLibrary(libs.sqlite)
-//    implementation(libs.anvilgui)
     compileOnly(libs.paper)
     compileOnly(libs.floodgate.api)
-//    compileOnly("com.kalimero2.team:claims-api:2.0.7")
 }
 
 java {
@@ -42,7 +38,6 @@ tasks {
 
     shadowJar {
         fun reloc(pkg: String, name: String) = relocate(pkg, "com.kalimero2.team.waystones.paper.shaded.$name")
-//        reloc("net.wesjd.anvilgui", "anvilgui")
     }
 }
 
